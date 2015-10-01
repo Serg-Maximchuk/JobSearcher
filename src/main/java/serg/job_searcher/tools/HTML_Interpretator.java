@@ -28,7 +28,7 @@ public class HTML_Interpretator<T extends SearchContext> implements HTML_Interpr
 	@Override
 	public List<HTML_Interpretation> getListFromClass(String className) {
 		List<HTML_Interpretation> interList = new LinkedList<>();
-		for (WebElement webE : getListByClass(className)) {
+		for (WebElement webE : getListEFromClass(className)) {
 			interList.add(new HTML_Interpretator<>(webE));
 		}
 		return interList;
@@ -37,7 +37,7 @@ public class HTML_Interpretator<T extends SearchContext> implements HTML_Interpr
 	@Override
 	public List<String> getTextListFromClass(String className) {
 		List<String> textList = new LinkedList<>();
-		for (WebElement webE : getListByClass(className)) {
+		for (WebElement webE : getListEFromClass(className)) {
 			textList.add(webE.getText());
 		}
 		return textList;
@@ -47,7 +47,7 @@ public class HTML_Interpretator<T extends SearchContext> implements HTML_Interpr
 		return webElement.findElement(By.className(className));
 	}
 	
-	private List<WebElement> getListByClass(String className) {
+	private List<WebElement> getListEFromClass(String className) {
 		return webElement.findElements(By.className(className));
 	}
 }

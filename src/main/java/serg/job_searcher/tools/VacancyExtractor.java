@@ -22,8 +22,8 @@ public class VacancyExtractor {
 	public static List<Vacancy> extract(List<HTML_Interpretation> webElemVacList, int vacCount) {
 		List<Vacancy> vacancies = new LinkedList<>();
 		// last element is not a vacancy, but page switcher.
-		List<HTML_Interpretation> bufVacList = webElemVacList.subList(0, webElemVacList.size() - 1);
-		List<HTML_Interpretation> vacList = bufVacList.subList(0, vacCount);
+		//List<HTML_Interpretation> bufVacList = webElemVacList.subList(0, webElemVacList.size() - 1);
+		List<HTML_Interpretation> vacList = webElemVacList.subList(0, vacCount);
 		System.out.print("Process: [");
 		int i = 0;
 		while (vacCount > i) {

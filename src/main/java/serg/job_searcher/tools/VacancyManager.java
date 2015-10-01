@@ -10,6 +10,7 @@ public class VacancyManager {
 	private static final String MESSAGE_CLASS = "mtmb";
 	private static final String MESSAGE_TEXT = "text-center";
 	private static final String ACTIVE_VAC_CLASS = "navNewVacCount";
+	private static final int ALL_VAC_ON_PAGE = 20;
 	private static final String VAC_CLASS = "item";
 	
 	private List<Vacancy> vacancies;
@@ -18,7 +19,7 @@ public class VacancyManager {
 	private int actualVacCount;
 	private LinkedList<Integer> vacCountMesList;
 	private List<String> mesList;
-	private HTML_Interpretator<?> driverInter;
+	private HTML_Interpretation driverInter;
 	private WebBrowser browser;
 	private boolean testRegime;
 	private int pageCount = 1;
@@ -93,13 +94,14 @@ public class VacancyManager {
 		return (newVacCount > 0) ? true : false;
 	}
 
-	public List<Vacancy> generateVacList(int vacNumber) {
-		if (vacNumber == 0) {
+	public List<Vacancy> generateVacList(int vacCount) {
+		if (vacCount == 0) {
 			return null;
 		}
-		if (vacNumber > 20) {
-			List<Vacancy> vacList = VacancyExtractor.extract(driverInter.getListFromClass(VAC_CLASS), 20);
-			int delta = vacNumber - 20;
+		List<HTML_Interpretation> allVacOnPage = driverInter.getListFromClass(VAC_CLASS);
+		if (vacCount > ALL_VAC_ON_PAGE) {
+			List<Vacancy> vacList = VacancyExtractor.extract(allVacOnPage, ALL_VAC_ON_PAGE);
+			int delta = vacCount - ALL_VAC_ON_PAGE;
 			ConsoleSpeaker.needSee(delta);
 			VacancyManager man = new VacancyManager();
 			man.setPageCount(pageCount);
@@ -108,7 +110,7 @@ public class VacancyManager {
 			vacList.addAll(man.generateVacList(delta));
 			return vacList;
 		} else {
-			List<Vacancy> vacList = VacancyExtractor.extract(driverInter.getListFromClass(VAC_CLASS), vacNumber);
+			List<Vacancy> vacList = VacancyExtractor.extract(allVacOnPage, vacCount);
 			return vacList;
 		}
 	}
