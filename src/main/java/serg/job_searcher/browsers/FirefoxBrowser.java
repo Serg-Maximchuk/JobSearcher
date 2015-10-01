@@ -6,10 +6,11 @@ import org.openqa.selenium.firefox.internal.ProfilesIni;
 
 public class FirefoxBrowser extends AbstractWebBrowser {
 	
-	private static final String PROFILE_PATH = "/home/serg/.mozilla/firefox/i4s1fdtb.default";
+	private static final String PROFILE_NAME = "default";
 	
 	public FirefoxBrowser() {
-		FirefoxProfile profile = new ProfilesIni().getProfile(PROFILE_PATH);
+		ProfilesIni allProfiles = new ProfilesIni();
+		FirefoxProfile profile = allProfiles.getProfile(PROFILE_NAME);
 		driver = new FirefoxDriver(profile);
 	}
 }

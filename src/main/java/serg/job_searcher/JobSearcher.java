@@ -53,39 +53,23 @@ public class JobSearcher {
 	
 	public int askWorkRegime() {
 		ConsoleSpeaker.askRegime();
-		
 		int regime = ConsoleSpeaker.get_2_Or_1();
-		StringBuilder message = new StringBuilder(50);
-		message.append("Launching ");
-		if (regime == 1) {
-			message.append("Test");
-		} else if (regime == 2) {
-			message.append("Search");
-		} else {
-			ConsoleSpeaker.error();
-		}
-		message.append(" mode.");
-		System.out.println(message);
+		ConsoleSpeaker.printRegimeMessage(regime);
 		return regime;
 	}
-	
+
 	public WebBrowser askAndOpenBrowser() {
 		ConsoleSpeaker.askBrowser();
 		int answer = ConsoleSpeaker.get_2_Or_1();
-		StringBuilder message = new StringBuilder(50);
+		ConsoleSpeaker.printBrowserMessage(answer);
 		WebBrowser browser = null;
-		message.append("Launching ");
 		if (answer == 1) {
-			message.append("Chrome");
 			browser = new ChromeBrowser();
 		} else if (answer == 2) {
-			message.append("Firefox");
 			browser = new FirefoxBrowser();
 		} else {
 			ConsoleSpeaker.error();
 		}
-		message.append(" browser.");
-		System.out.println(message);
 		return browser;
 	}
 }

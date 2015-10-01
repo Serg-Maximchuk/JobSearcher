@@ -4,6 +4,10 @@ import java.util.InputMismatchException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
+import serg.job_searcher.browsers.ChromeBrowser;
+import serg.job_searcher.browsers.FirefoxBrowser;
+import serg.job_searcher.browsers.WebBrowser;
+
 public class ConsoleSpeaker {
 	
 	private static final String HELLO_MESSAGE = "Job Searcher welcomes you!";
@@ -19,7 +23,9 @@ public class ConsoleSpeaker {
 			+ "2. Firefox - type '2'" + NL
 			+ "Choose browser:";
 	private static final String INCORRECT = "Incorrect. Try again.";
-	private static final String ERR = "REGIME ERROR.";
+	private static final String[] REGIME_WORDS = {" mode", "Test", "Search"};
+	private static final String[] BROWSER_WORDS = {" browser", "Chrome", "Firefox"};
+	private static final String ERR = "ERROR.";
 	private static final String CLOSE_MESSAGE = "There is no new vacancies. Closing browser.";
 	private static final String BYE_MESSAGE = "Good bye.";
 	private static final String ASK_TEST_VAC = "As I work in test mode, how much vacancies needs to be founded?";
@@ -66,6 +72,22 @@ public class ConsoleSpeaker {
 	
 	public static void incorrect() {
 		System.out.println(INCORRECT);
+	}
+	
+	public static void printRegimeMessage(int regime) {
+		printMessage(regime, REGIME_WORDS);
+	}
+	
+	public static void printMessage(int pointer, String[] words) {
+		StringBuilder message = new StringBuilder(50);
+		message.append("Launching ");
+		message.append(words[pointer]);
+		message.append(words[0]);
+		System.out.println(message);
+	}
+	
+	public static void printBrowserMessage(int answer) {
+		printMessage(answer, BROWSER_WORDS);
 	}
 	
 	public static void error() {
