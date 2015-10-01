@@ -11,8 +11,7 @@ public class VacancyManager {
 	private static final String MESSAGE_TEXT = "text-center";
 	private static final String ACTIVE_VAC_CLASS = "navNewVacCount";
 	private static final String VAC_CLASS = "item";
-	private static final String PAGES_URL = "http://rabota.ua/jobsearch/notepad/vacancies_profile?pg=";
-
+	
 	private List<Vacancy> vacancies;
 	private int newVacCount;
 	private int activeVacCount;
@@ -98,15 +97,14 @@ public class VacancyManager {
 		if (vacNumber == 0) {
 			return null;
 		}
-		++pageCount;
-		//rewrite and make correct pageCount
-		
 		if (vacNumber > 20) {
 			List<Vacancy> vacList = VacancyExtractor.extract(driverInter.getListFromClass(VAC_CLASS), 20);
 			int delta = vacNumber - 20;
 			ConsoleSpeaker.needSee(delta);
 			VacancyManager man = new VacancyManager();
-			man.controlBrowser(goToPage(pageCount));
+			man.setPageCount(pageCount);
+			man.increasePageCount();
+			man.controlBrowser(goToNextPage());
 			vacList.addAll(man.generateVacList(delta));
 			return vacList;
 		} else {
@@ -114,9 +112,21 @@ public class VacancyManager {
 			return vacList;
 		}
 	}
+	
+	public void setPageCount(int pageCount) {
+		this.pageCount = pageCount;
+	}
+	
+	public void increasePageCount() {
+		pageCount++;
+	}
 
-	public WebBrowser goToPage(int page) {
-		browser.open(PAGES_URL + page);
+	public WebBrowser goToNextPage() {
+		StringBuilder currentURL = new StringBuilder(100);
+		currentURL.append(browser.getCurrURL());
+		currentURL.append("?pg=");
+		currentURL.append(pageCount);
+		browser.open(currentURL.toString());
 		return browser;
 	}
 
@@ -143,6 +153,6 @@ public class VacancyManager {
 	}
 	
 	public void closeBrowser() {
-		
+		browser.close();
 	}
 }

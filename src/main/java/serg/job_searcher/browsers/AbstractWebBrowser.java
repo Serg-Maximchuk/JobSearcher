@@ -33,7 +33,12 @@ abstract class AbstractWebBrowser implements WebBrowser {
 	}
 	
 	@Override
+	public String getCurrURL() {
+		return driver.getCurrentUrl();
+	}
+	
+	@Override
 	public void close() {
 		driver.close();
-	}
+	}	
 }

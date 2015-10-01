@@ -8,5 +8,6 @@ public interface WebBrowser {
 	public void open(String url);
 	public WebDriver getDriver();
 	public WebElement waitThenExtract(By byMethod);
+	public String getCurrURL();
 	public void close();
 }
