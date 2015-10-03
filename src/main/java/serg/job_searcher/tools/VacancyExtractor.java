@@ -41,7 +41,7 @@ public class VacancyExtractor {
 		return vac;
 	}
 
-	public static LinkedList<String> collectInfo() {
+	private static LinkedList<String> collectInfo() {
 		LinkedList<String> infoList = new LinkedList<>();
 		infoList.add(extractPosition());
 		infoList.add(extractCompany());
@@ -51,20 +51,20 @@ public class VacancyExtractor {
 		return infoList;
 	}
 
-	public static String extractPosition() {
+	private static String extractPosition() {
 		return interpretation.getTextInClass(POSITION_CLASS);
 	}
 
-	public static String extractCompany() {
+	private static String extractCompany() {
 		return interpretation.getTextInClass(COMPANY_CLASS);
 	}
 
-	public static String extractCity() {
+	private static String extractCity() {
 		String[] elementText = interpretation.getTextInClass(CITY_CLASS).split(SEPARATOR);
 		return elementText[elementText.length - 1].trim();
 	}
 
-	public static String extractText() {
+	private static String extractText() {
 		int i;
 		try {
 			interpretation.getTextInClass(MESSAGE_CLASS);
@@ -76,11 +76,11 @@ public class VacancyExtractor {
 		return textList.remove(i);
 	}
 
-	public static String extractTime() {
+	private static String extractTime() {
 		return interpretation.getTextInClass(TIME_CLASS);
 	}
 
-	public static LinkedList<String> extractKeyWords() {
+	private static LinkedList<String> extractKeyWords() {
 		HTML_Interpretation keyWordsElement = interpretation.getElByClass(KEY_WORDS_CLASS);
 		List<String> keyWords = keyWordsElement.getTextListFromClass(TEXT_CLASS);
 		LinkedList<String> keyWordsList = new LinkedList<>();

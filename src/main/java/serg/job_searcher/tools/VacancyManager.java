@@ -30,20 +30,9 @@ public class VacancyManager {
 	private int pageCount = 1;
 	private boolean hadToBeClosed;
 
-	private static class ManagerHelper {
-
-		public static boolean findOutRegime() {
-			return (ConsoleSpeaker.askRegime() == 1) ? true : false;
-		}
-
-		public static WebBrowser findOutBrowser() {
-			return (ConsoleSpeaker.askBrowser() == 1) ? new ChromeBrowser() : new FirefoxBrowser();
-		}
-	}
-
 	public void initialize() {
-		testRegime = ManagerHelper.findOutRegime();
-		browser = ManagerHelper.findOutBrowser();
+		testRegime = (ConsoleSpeaker.askRegime() == 1) ? true : false;
+		browser = (ConsoleSpeaker.askBrowser() == 1) ? new ChromeBrowser() : new FirefoxBrowser();
 		browser.open(VACANCIES_URL);
 		this.driverInter = browser.getInterDriver();
 		intializeVacCountFromMessages();

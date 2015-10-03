@@ -49,7 +49,7 @@ public class VacancyPrinter {
 		}
 	}
 	
-	public static void printCorrectMessage(int newVacCount) {
+	private static void printCorrectMessage(int newVacCount) {
 		StringBuilder message = new StringBuilder(50)
 				.append("I find ")
 				.append(newVacCount)
@@ -58,7 +58,7 @@ public class VacancyPrinter {
 		System.out.println(message);
 	}
 	
-	public static void printInfo(Vacancy vac) {
+	private static void printInfo(Vacancy vac) {
 		printPosition(vac);
 		printCompany(vac);
 		printCity(vac);
