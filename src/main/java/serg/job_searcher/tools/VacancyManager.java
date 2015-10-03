@@ -2,40 +2,75 @@ package serg.job_searcher.tools;
 
 import java.util.LinkedList;
 import java.util.List;
+
+import serg.job_searcher.browsers.ChromeBrowser;
+import serg.job_searcher.browsers.FirefoxBrowser;
 import serg.job_searcher.browsers.WebBrowser;
 import serg.job_searcher.entities.Vacancy;
 
 public class VacancyManager {
 
+	private static final String VACANCIES_URL = "http://rabota.ua/jobsearch/notepad/vacancies_profile";
+
 	private static final String MESSAGE_CLASS = "mtmb";
 	private static final String MESSAGE_TEXT = "text-center";
 	private static final String ACTIVE_VAC_CLASS = "navNewVacCount";
-	private static final int ALL_VAC_ON_PAGE = 20;
 	private static final String VAC_CLASS = "item";
-	
+	private static final String PAGE_ARG = "?pg=";
+
 	private List<Vacancy> vacancies;
 	private int newVacCount;
 	private int activeVacCount;
 	private int actualVacCount;
 	private LinkedList<Integer> vacCountMesList;
-	private List<String> mesList;
+	private List<String> messages;
 	private HTML_Interpretation driverInter;
 	private WebBrowser browser;
 	private boolean testRegime;
 	private int pageCount = 1;
-	
-	public void setRegime(int regime) {
-		if (regime == 1) testRegime = true;
+	private boolean hadToBeClosed;
+
+	private static class ManagerHelper {
+
+		public static boolean findOutRegime() {
+			return (ConsoleSpeaker.askRegime() == 1) ? true : false;
+		}
+
+		public static WebBrowser findOutBrowser() {
+			return (ConsoleSpeaker.askBrowser() == 1) ? new ChromeBrowser() : new FirefoxBrowser();
+		}
 	}
 
-	public void controlBrowser(WebBrowser browser) {
-		this.browser = browser;
-		driverInter = new HTML_Interpretator<>(browser.getDriver());
+	public void initialize() {
+		testRegime = ManagerHelper.findOutRegime();
+		browser = ManagerHelper.findOutBrowser();
+		browser.open(VACANCIES_URL);
+		this.driverInter = browser.getInterDriver();
+		intializeVacCountFromMessages();
+	}
+
+	public void setDriverInter(HTML_Interpretation driverInter) {
+		this.driverInter = driverInter;
+	}
+
+	public void intializeVacCountFromMessages() {
+		vacCountMesList = new LinkedList<>();
+		for (String message : getMessages()) {
+			vacCountMesList.add(Integer.valueOf(message.replaceAll("[^0-9]+", " ").trim()));
+		}
+	}
+
+	public List<String> getMessages() {
+		List<String> messages = new LinkedList<>();
+		List<HTML_Interpretation> messagesInterList = driverInter.getListFromClass(MESSAGE_CLASS);
+		for (HTML_Interpretation interElement : messagesInterList) {
+			messages.add(interElement.getTextInClass(MESSAGE_TEXT));
+		}
+		return messages;
 	}
 
 	public void getVacCountList() {
-		intializeVacCountFromMessages();
-		for (String message : mesList) {
+		for (String message : messages) {
 			ConsoleSpeaker.printMessage(message);
 		}
 		newVacCount = getNewVacCount();
@@ -54,18 +89,6 @@ public class VacancyManager {
 			newVacCount = 0;
 		}
 		vacancies = generateVacList(newVacCount);
-	}
-
-	public void intializeVacCountFromMessages() {
-		vacCountMesList = new LinkedList<>();
-		List<HTML_Interpretation> interList = driverInter.getListFromClass(MESSAGE_CLASS);
-		mesList = new LinkedList<>();
-		for (HTML_Interpretation interElement : interList) {
-			mesList.add(interElement.getTextInClass(MESSAGE_TEXT));
-		}
-		for (String message : mesList) {
-			vacCountMesList.add(Integer.valueOf(message.replaceAll("[^0-9]+", " ").trim()));
-		}
 	}
 
 	public int getNewVacCount() {
@@ -98,37 +121,38 @@ public class VacancyManager {
 		if (vacCount == 0) {
 			return null;
 		}
-		List<HTML_Interpretation> allVacOnPage = driverInter.getListFromClass(VAC_CLASS);
-		if (vacCount > ALL_VAC_ON_PAGE) {
-			List<Vacancy> vacList = VacancyExtractor.extract(allVacOnPage, ALL_VAC_ON_PAGE);
-			int delta = vacCount - ALL_VAC_ON_PAGE;
+		// the last element (21-st) is page switcher, so we need only 20
+		List<HTML_Interpretation> allVacOnPage = driverInter.getListFromClass(VAC_CLASS).subList(0, 20);
+		int vacOnPageCount = allVacOnPage.size();
+		if (vacCount > vacOnPageCount) {
+			List<Vacancy> vacList = VacancyExtractor.extract(allVacOnPage);
+			int delta = vacCount - vacOnPageCount;
 			ConsoleSpeaker.needSee(delta);
 			VacancyManager man = new VacancyManager();
-			man.setPageCount(pageCount);
-			man.increasePageCount();
-			man.controlBrowser(goToNextPage());
+			man.setPageCount(++pageCount);
+			man.setDriverInter(goToNextPage().getInterDriver());
 			vacList.addAll(man.generateVacList(delta));
 			return vacList;
 		} else {
-			List<Vacancy> vacList = VacancyExtractor.extract(allVacOnPage, vacCount);
-			return vacList;
+			return VacancyExtractor.extract(allVacOnPage.subList(0, vacCount));
 		}
 	}
-	
+
 	public void setPageCount(int pageCount) {
 		this.pageCount = pageCount;
 	}
-	
-	public void increasePageCount() {
-		pageCount++;
-	}
 
 	public WebBrowser goToNextPage() {
-		StringBuilder currentURL = new StringBuilder(100);
-		currentURL.append(browser.getCurrURL());
-		currentURL.append("?pg=");
-		currentURL.append(pageCount);
-		browser.open(currentURL.toString());
+		StringBuilder newURL = new StringBuilder(100);
+		String currentURL = browser.getCurrURL();
+		if (pageCount <= 2) {
+			newURL.append(currentURL);
+			newURL.append(PAGE_ARG);
+		} else {
+			newURL.append(currentURL.substring(0, currentURL.length() - 1));
+		}
+		newURL.append(pageCount);
+		browser.open(newURL.toString());
 		return browser;
 	}
 
@@ -153,7 +177,24 @@ public class VacancyManager {
 	public void printNewVacList() {
 		VacancyPrinter.printList(vacancies);
 	}
-	
+
+	public void askCloseBrowser() {
+		ConsoleSpeaker.askCloseBrowser();
+		int answer = ConsoleSpeaker.get_2_Or_1();
+		if (answer == 1) {
+			hadToBeClosed = true;
+			ConsoleSpeaker.printCloseBrowserMessage();
+		} else if (answer == 2) {
+			hadToBeClosed = false;
+		} else {
+			ConsoleSpeaker.error();
+		}
+	}
+
+	public boolean isNeededCloseBrowser() {
+		return hadToBeClosed;
+	}
+
 	public void closeBrowser() {
 		browser.close();
 	}

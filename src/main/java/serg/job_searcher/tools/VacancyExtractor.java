@@ -19,20 +19,13 @@ public class VacancyExtractor {
 
 	private static HTML_Interpretation interpretation;
 
-	public static List<Vacancy> extract(List<HTML_Interpretation> webElemVacList, int vacCount) {
+	public static List<Vacancy> extract(List<HTML_Interpretation> webElemVacList) {
 		List<Vacancy> vacancies = new LinkedList<>();
-		// last element is not a vacancy, but page switcher.
-		//List<HTML_Interpretation> bufVacList = webElemVacList.subList(0, webElemVacList.size() - 1);
-		List<HTML_Interpretation> vacList = webElemVacList.subList(0, vacCount);
 		System.out.print("Process: [");
-		int i = 0;
-		while (vacCount > i) {
-			for (HTML_Interpretation webElementVac : vacList) {
-				System.out.print('#');
-				i++;
-				Vacancy vac = VacancyExtractor.extract(webElementVac);
-				vacancies.add(vac);
-			}
+		for (HTML_Interpretation webElementVac : webElemVacList) {
+			System.out.print('#');
+			Vacancy vac = VacancyExtractor.extract(webElementVac);
+			vacancies.add(vac);
 		}
 		System.out.println(']');
 		return vacancies;

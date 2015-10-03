@@ -4,10 +4,6 @@ import java.util.InputMismatchException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-import serg.job_searcher.browsers.ChromeBrowser;
-import serg.job_searcher.browsers.FirefoxBrowser;
-import serg.job_searcher.browsers.WebBrowser;
-
 public class ConsoleSpeaker {
 	
 	private static final String HELLO_MESSAGE = "Job Searcher welcomes you!";
@@ -26,7 +22,13 @@ public class ConsoleSpeaker {
 	private static final String[] REGIME_WORDS = {" mode", "Test", "Search"};
 	private static final String[] BROWSER_WORDS = {" browser", "Chrome", "Firefox"};
 	private static final String ERR = "ERROR.";
-	private static final String CLOSE_MESSAGE = "There is no new vacancies. Closing browser.";
+	private static final String ASK_CLOSE_BROWSER =
+			"What to do with browser?" + NL
+			+ "1. Close - type '1'" + NL
+			+ "2. Nothing - type '2'" + NL
+			+ "Your choise is:";
+	private static final String BROWSER_CLOSING_MESSAGE = "Closing browser...";
+	private static final String CLOSE_MESSAGE = "There is no new vacancies.";
 	private static final String BYE_MESSAGE = "Good bye.";
 	private static final String ASK_TEST_VAC = "As I work in test mode, how much vacancies needs to be founded?";
 	private static final String ASK_POSITION = 
@@ -40,8 +42,20 @@ public class ConsoleSpeaker {
 		System.out.println(HELLO_MESSAGE);
 	}
 
-	public static void askRegime() {
+	public static int askRegime() {
 		System.out.println(CHOOSE_MODE_MESSAGE);
+		return getAnswer(REGIME_WORDS);
+	}
+	
+	public static int askBrowser() {
+		System.out.println(CHOOSE_BROWSER_MESSAGE);
+		return getAnswer(BROWSER_WORDS);
+	}
+	
+	private static int getAnswer(String[] words) {
+		int answer = get_2_Or_1();
+		buildMessage(answer, words);
+		return answer;
 	}
 	
 	public static int get_2_Or_1() {
@@ -74,48 +88,20 @@ public class ConsoleSpeaker {
 		System.out.println(INCORRECT);
 	}
 	
-	public static void printRegimeMessage(int regime) {
-		printMessage(regime, REGIME_WORDS);
-	}
-	
-	public static void printMessage(int pointer, String[] words) {
-		StringBuilder message = new StringBuilder(50);
-		message.append("Launching ");
-		message.append(words[pointer]);
-		message.append(words[0]);
-		System.out.println(message);
-	}
-	
-	public static void printBrowserMessage(int answer) {
-		printMessage(answer, BROWSER_WORDS);
+	public static void buildMessage(int pointer, String[] words) {
+		System.out.println("Launching " + words[pointer] + words[0]);
 	}
 	
 	public static void error() {
 		System.out.println(ERR);
 	}
 	
-	public static void askBrowser() {
-		System.out.println(CHOOSE_BROWSER_MESSAGE);
-	}
-
-	public static void closeMessage() {
-		System.out.println(CLOSE_MESSAGE);
-	}
-
-	public static void bye() {
-		System.out.println(BYE_MESSAGE);
-	}
-
 	public static void askTestVacNum() {
 		System.out.println(ASK_TEST_VAC);		
 	}
 
 	public static void needSee(int delta) {
-		System.out.println(new StringBuilder(50)
-				.append("I need see ")
-				.append(delta)
-				.append(" vacancies on next page.")
-		);
+		System.out.println("I need see " + delta + " vacancies on next page.");
 	}
 
 	public static void askPosition() {
@@ -123,22 +109,28 @@ public class ConsoleSpeaker {
 	}
 
 	public static void printVacancies(int newVacCount, int activeVacCount, int actualVacCount) {
-		System.out.println(new StringBuilder(200)
-				.append("New vacancies: ")
-				.append(newVacCount)
-				.append(NL)
-				.append("Active vacancies: ")
-				.append(activeVacCount)
-				.append(NL)
-				.append("Actual vacancies: ")
-				.append(actualVacCount)
-		);
+		System.out.println("New vacancies: " + newVacCount + NL
+				 + "Active vacancies: " + activeVacCount + NL
+				 + "Actual vacancies: " + actualVacCount);
 	}
 
 	public static void printMessage(String message) {
-		System.out.println(new StringBuilder(50)
-				.append("Message: ")
-				.append(message)
-		);
+		System.out.println("Message: " + message);
+	}
+	
+	public static void askCloseBrowser() {
+		System.out.println(ASK_CLOSE_BROWSER);
+	}
+	
+	public static void printCloseBrowserMessage() {
+		System.out.println(BROWSER_CLOSING_MESSAGE);
+	}
+	
+	public static void closeMessage() {
+		System.out.println(CLOSE_MESSAGE);
+	}
+
+	public static void bye() {
+		System.out.println(BYE_MESSAGE);
 	}
 }

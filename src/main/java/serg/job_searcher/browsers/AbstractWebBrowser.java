@@ -7,6 +7,9 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import serg.job_searcher.tools.HTML_Interpretation;
+import serg.job_searcher.tools.HTML_Interpretator;
+
 abstract class AbstractWebBrowser implements WebBrowser {
 	
 	protected WebDriver driver;
@@ -19,6 +22,11 @@ abstract class AbstractWebBrowser implements WebBrowser {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@Override
+	public HTML_Interpretation getInterDriver() {
+		return new HTML_Interpretator<>(driver);
 	}
 	
 	@Override
@@ -40,5 +48,5 @@ abstract class AbstractWebBrowser implements WebBrowser {
 	@Override
 	public void close() {
 		driver.close();
-	}	
+	}
 }
