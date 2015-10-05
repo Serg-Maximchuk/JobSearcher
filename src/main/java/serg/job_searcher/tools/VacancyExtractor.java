@@ -1,6 +1,5 @@
 package serg.job_searcher.tools;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.CountDownLatch;
@@ -18,14 +17,16 @@ public class VacancyExtractor {
 	private static final String TEXT_CLASS = "rua-p-c-mid";
 	private static final String TIME_CLASS = "pull-right";
 	private static final String KEY_WORDS_CLASS = "inline";
-	
-	private VacancyExtractor() {}
+
+	private VacancyExtractor() {
+	}
 
 	public static List<Vacancy> extract(List<HTML_Interpretation> interVacList) {
+		int size = interVacList.size();
 		Vector<Vacancy> vacancies = new Vector<>();
-		vacancies.setSize(interVacList.size());
+		vacancies.setSize(size);
 		System.out.print("Process: [");
-		final CountDownLatch latch = new CountDownLatch(interVacList.size());
+		final CountDownLatch latch = new CountDownLatch(size);
 		for (HTML_Interpretation interpretatedVac : interVacList) {
 			new Thread(new Runnable() {
 				@Override
@@ -45,57 +46,75 @@ public class VacancyExtractor {
 		return vacancies;
 	}
 
-	public static Vacancy extract(HTML_Interpretation HTML_Int) {
+	public static Vacancy extract(HTML_Interpretation interpretatedVac) {
 		return new Vacancy() {
 			{
-				setInfo(collectInfo(HTML_Int));
-				setKeyWords(extractKeyWords(HTML_Int));
+				final CountDownLatch latch = new CountDownLatch(6);
+
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						setPosition(interpretatedVac.getTextInClass(POSITION_CLASS));
+						latch.countDown();
+					}
+				}).start();
+
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						setCompany(interpretatedVac.getTextInClass(COMPANY_CLASS));
+						latch.countDown();
+					}
+				}).start();
+
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						String[] elementText = interpretatedVac.getTextInClass(CITY_CLASS).split(SEPARATOR);
+						setCity(elementText[elementText.length - 1].trim());
+						latch.countDown();
+					}
+				}).start();
+
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						int i;
+						try {
+							interpretatedVac.getTextInClass(MESSAGE_CLASS);
+							i = 1;
+						} catch (NoSuchElementException e) {
+							i = 0;
+						}
+						setText(interpretatedVac.getTextListFromClass(TEXT_CLASS).remove(i));
+						latch.countDown();
+					}
+				}).start();
+
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						setTime(interpretatedVac.getTextInClass(TIME_CLASS));
+						latch.countDown();
+					}
+				}).start();
+				
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						setKeyWords(interpretatedVac
+								.getElByClass(KEY_WORDS_CLASS)
+								.getTextListFromClass(TEXT_CLASS));
+						latch.countDown();
+					}
+				}).start();
+
+				try {
+					latch.await();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
 		};
-	}
-
-	private static LinkedList<String> collectInfo(HTML_Interpretation HTML_Int) {
-		return new LinkedList<String>() {
-			private static final long serialVersionUID = -5019187361458691782L;
-			{
-				add(extractPosition(HTML_Int));
-				add(extractCompany(HTML_Int));
-				add(extractCity(HTML_Int));
-				add(extractText(HTML_Int));
-				add(extractTime(HTML_Int));
-			}
-		};
-	}
-
-	private static String extractPosition(HTML_Interpretation HTML_Int) {
-		return HTML_Int.getTextInClass(POSITION_CLASS);
-	}
-
-	private static String extractCompany(HTML_Interpretation HTML_Int) {
-		return HTML_Int.getTextInClass(COMPANY_CLASS);
-	}
-
-	private static String extractCity(HTML_Interpretation HTML_Int) {
-		String[] elementText = HTML_Int.getTextInClass(CITY_CLASS).split(SEPARATOR);
-		return elementText[elementText.length - 1].trim();
-	}
-
-	private static String extractText(HTML_Interpretation HTML_Int) {
-		int i;
-		try {
-			HTML_Int.getTextInClass(MESSAGE_CLASS);
-			i = 1;
-		} catch (NoSuchElementException e) {
-			i = 0;
-		}
-		return HTML_Int.getTextListFromClass(TEXT_CLASS).remove(i);
-	}
-
-	private static String extractTime(HTML_Interpretation HTML_Int) {
-		return HTML_Int.getTextInClass(TIME_CLASS);
-	}
-
-	private static List<String> extractKeyWords(HTML_Interpretation HTML_Int) {
-		return HTML_Int.getElByClass(KEY_WORDS_CLASS).getTextListFromClass(TEXT_CLASS);
 	}
 }

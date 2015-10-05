@@ -10,7 +10,7 @@ public class Vacancy {
 	private String city;
 	private String text;
 	private String time;
-	private List<String> keyWordsList;
+	private List<String> keyWords;
 	
 	public void setInfo(List<String> infoList) {
 		Iterator<String> iter = infoList.iterator();
@@ -21,10 +21,48 @@ public class Vacancy {
 		time = iter.next();
 	}
 	
-	public void setKeyWords(List<String> keyWordsList) {
-		this.keyWordsList = keyWordsList;
+	/**
+	 * @param position the position to set
+	 */
+	public void setPosition(String position) {
+		this.position = position;
 	}
-	
+
+	/**
+	 * @param company the company to set
+	 */
+	public void setCompany(String company) {
+		this.company = company;
+	}
+
+	/**
+	 * @param city the city to set
+	 */
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	/**
+	 * @param text the text to set
+	 */
+	public void setText(String text) {
+		this.text = text;
+	}
+
+	/**
+	 * @param time the time to set
+	 */
+	public void setTime(String time) {
+		this.time = time;
+	}
+
+	/**
+	 * @param keyWordsList the keyWordsList to set
+	 */
+	public void setKeyWords(List<String> keyWordsList) {
+		this.keyWords = keyWordsList;
+	}
+
 	public String getPosition() {
 		return position;
 	}
@@ -61,6 +99,6 @@ public class Vacancy {
 	 * @return the keyWordsList
 	 */
 	public List<String> getKeyWordsList() {
-		return keyWordsList;
+		return keyWords;
 	}
 }

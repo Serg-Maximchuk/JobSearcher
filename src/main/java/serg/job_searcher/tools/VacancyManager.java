@@ -61,7 +61,7 @@ public class VacancyManager {
 
 			{
 				for (HTML_Interpretation interElement : driverInter.getListFromClass(MESSAGE_CLASS)) {
-					messages.add(interElement.getTextInClass(MESSAGE_TEXT));
+					add(interElement.getTextInClass(MESSAGE_TEXT));
 				}
 			}
 		};
