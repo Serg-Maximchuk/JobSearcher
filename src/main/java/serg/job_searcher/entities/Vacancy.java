@@ -1,7 +1,7 @@
 package serg.job_searcher.entities;
 
 import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.List;
 
 public class Vacancy {
 	
@@ -10,9 +10,9 @@ public class Vacancy {
 	private String city;
 	private String text;
 	private String time;
-	private LinkedList<String> keyWordsList;
+	private List<String> keyWordsList;
 	
-	public void setInfo(LinkedList<String> infoList) {
+	public void setInfo(List<String> infoList) {
 		Iterator<String> iter = infoList.iterator();
 		position = iter.next();
 		company = iter.next();
@@ -21,7 +21,7 @@ public class Vacancy {
 		time = iter.next();
 	}
 	
-	public void setKeyWords(LinkedList<String> keyWordsList) {
+	public void setKeyWords(List<String> keyWordsList) {
 		this.keyWordsList = keyWordsList;
 	}
 	
@@ -60,7 +60,7 @@ public class Vacancy {
 	/**
 	 * @return the keyWordsList
 	 */
-	public LinkedList<String> getKeyWordsList() {
+	public List<String> getKeyWordsList() {
 		return keyWordsList;
 	}
 }

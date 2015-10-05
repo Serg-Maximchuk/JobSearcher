@@ -20,6 +20,7 @@ public class JobSearcher {
 		manager.printStat();
 		
 		if (manager.isNewVacExist()) {
+			System.out.println("Founded next positions:");
 			manager.printNewVacPositions();
 			int number = manager.askPosition();
 			while (number > 0) {

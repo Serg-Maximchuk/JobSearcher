@@ -9,6 +9,8 @@ public class VacancyPrinter {
 	private static final String LINE = "--------------------------------------------";
 	private static final String VAC_NUM = "Number of vacancy: ";
 	
+	private VacancyPrinter() {}
+	
 	private static void printLine() {
 		System.out.println(LINE);
 	}
@@ -20,19 +22,15 @@ public class VacancyPrinter {
 			System.out.println(new StringBuilder(50)
 					.append(++i)
 					.append(". ")
-					.append(vac.getPosition()
-			));
+					.append(vac.getPosition())
+			);
 		}
 	}
 	
 	public static void printVacancy(int number, List<Vacancy> vacList) {
 		printLine();
-		System.out.println(new StringBuilder(50)
-				.append(VAC_NUM)
-				.append(number)
-		);
-		--number;
-		printInfo(vacList.get(number));
+		System.out.println(VAC_NUM + number);
+		printInfo(vacList.get(--number));
 		printLine();
 	}
 	
@@ -50,12 +48,7 @@ public class VacancyPrinter {
 	}
 	
 	private static void printCorrectMessage(int newVacCount) {
-		StringBuilder message = new StringBuilder(50)
-				.append("I find ")
-				.append(newVacCount)
-				.append(" new ");
-		message.append( (newVacCount == 1) ? "vacancy." : "vacancies." );
-		System.out.println(message);
+		System.out.println("I find " + newVacCount + " new " + (newVacCount == 1 ? "vacancy." : "vacancies."));
 	}
 	
 	private static void printInfo(Vacancy vac) {
@@ -68,33 +61,23 @@ public class VacancyPrinter {
 	}
 	
 	private static void printPosition(Vacancy vac) {
-		System.out.println(new StringBuilder(50)
-				.append("Position: ")
-				.append(vac.getPosition()));
+		System.out.println("Position: " + vac.getPosition());
 	}
 
 	private static void printCompany(Vacancy vac) {
-		System.out.println(new StringBuilder(50)
-				.append("Company: ")
-				.append(vac.getCompany()));
+		System.out.println("Company: " + vac.getCompany());
 	}
 
 	private static void printCity(Vacancy vac) {
-		System.out.println(new StringBuilder(50)
-				.append("City: ")
-				.append(vac.getCity()));
+		System.out.println("City: " + vac.getCity());
 	}
 
 	private static void printText(Vacancy vac) {
-		System.out.println(new StringBuilder(50)
-				.append("Vacancy text: ")
-				.append(vac.getText()));
+		System.out.println("Vacancy text: " + vac.getText());
 	}
 
 	private static void printTime(Vacancy vac) {
-		System.out.println(new StringBuilder(50)
-				.append("Last refresh: ")
-				.append(vac.getTime()));
+		System.out.println("Last refresh: " + vac.getTime());
 	}
 
 	private static void printKeyWords(Vacancy vac) {

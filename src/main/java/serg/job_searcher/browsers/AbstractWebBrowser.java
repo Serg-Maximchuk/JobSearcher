@@ -15,13 +15,14 @@ abstract class AbstractWebBrowser implements WebBrowser {
 	protected WebDriver driver;
 
 	@Override
-	public void open(String url) {
+	public WebBrowser open(String url) {
 		driver.get(url);
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		return this;
 	}
 	
 	@Override

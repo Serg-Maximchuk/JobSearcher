@@ -7,7 +7,7 @@ import org.openqa.selenium.WebElement;
 import serg.job_searcher.tools.HTML_Interpretation;
 
 public interface WebBrowser {
-	public void open(String url);
+	public WebBrowser open(String url);
 	public WebDriver getDriver();
 	public WebElement waitThenExtract(By byMethod);
 	public String getCurrURL();

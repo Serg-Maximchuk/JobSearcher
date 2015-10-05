@@ -43,19 +43,28 @@ public class VacancyManager {
 	}
 
 	public void intializeVacCountFromMessages() {
-		vacCountMesList = new LinkedList<>();
-		for (String message : getMessages()) {
-			vacCountMesList.add(Integer.valueOf(message.replaceAll("[^0-9]+", " ").trim()));
-		}
+		messages = getMessages();
+		vacCountMesList = new LinkedList<Integer>() {
+			private static final long serialVersionUID = 3131358699775535338L;
+
+			{
+				for (String message : messages) {
+					add(Integer.valueOf(message.replaceAll("[^0-9]+", " ").trim()));
+				}
+			}
+		};
 	}
 
 	public List<String> getMessages() {
-		List<String> messages = new LinkedList<>();
-		List<HTML_Interpretation> messagesInterList = driverInter.getListFromClass(MESSAGE_CLASS);
-		for (HTML_Interpretation interElement : messagesInterList) {
-			messages.add(interElement.getTextInClass(MESSAGE_TEXT));
-		}
-		return messages;
+		return new LinkedList<String>() {
+			private static final long serialVersionUID = 55726793690860279L;
+
+			{
+				for (HTML_Interpretation interElement : driverInter.getListFromClass(MESSAGE_CLASS)) {
+					messages.add(interElement.getTextInClass(MESSAGE_TEXT));
+				}
+			}
+		};
 	}
 
 	public void getVacCountList() {
@@ -66,13 +75,7 @@ public class VacancyManager {
 		activeVacCount = getActiveVacCount();
 		actualVacCount = getActualVacCount();
 		if (testRegime) {
-			ConsoleSpeaker.askTestVacNum();
-			int number = ConsoleSpeaker.getInt();
-			while (number > 50 || number < 1) {
-				ConsoleSpeaker.incorrect();
-				number = ConsoleSpeaker.getInt();
-			}
-			newVacCount = number;
+			newVacCount = getTestVacCount();
 		} else if (newVacCount == actualVacCount) {
 			// There is no new vacancies.
 			newVacCount = 0;
@@ -96,6 +99,20 @@ public class VacancyManager {
 
 	public int getActualVacCount() {
 		return vacCountMesList.getLast();
+	}
+
+	public int getTestVacCount() {
+		ConsoleSpeaker.askTestVacNum();
+		int number = ConsoleSpeaker.getInt();
+		while (number > 80 || number < 1) {
+			if (number > 80) {
+				System.out.println("Too much. Limit is 80.");
+			} else if (number < 1) {
+				ConsoleSpeaker.incorrect();
+			}
+			number = ConsoleSpeaker.getInt();
+		}
+		return number;
 	}
 
 	public void printStat() {
@@ -132,8 +149,11 @@ public class VacancyManager {
 	}
 
 	public WebBrowser goToNextPage() {
+		return browser.open(buildNewURL(browser.getCurrURL()));
+	}
+
+	private String buildNewURL(String currentURL) {
 		StringBuilder newURL = new StringBuilder(100);
-		String currentURL = browser.getCurrURL();
 		if (pageCount <= 2) {
 			newURL.append(currentURL);
 			newURL.append(PAGE_ARG);
@@ -141,8 +161,7 @@ public class VacancyManager {
 			newURL.append(currentURL.substring(0, currentURL.length() - 1));
 		}
 		newURL.append(pageCount);
-		browser.open(newURL.toString());
-		return browser;
+		return newURL.toString();
 	}
 
 	public void printNewVacPositions() {
