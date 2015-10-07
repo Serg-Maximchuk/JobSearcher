@@ -1,6 +1,5 @@
 package serg.job_searcher.entities;
 
-import java.util.Iterator;
 import java.util.List;
 
 public class Vacancy {
@@ -11,15 +10,6 @@ public class Vacancy {
 	private String text;
 	private String time;
 	private List<String> keyWords;
-	
-	public void setInfo(List<String> infoList) {
-		Iterator<String> iter = infoList.iterator();
-		position = iter.next();
-		company = iter.next();
-		city = iter.next();
-		text = iter.next();
-		time = iter.next();
-	}
 	
 	/**
 	 * @param position the position to set

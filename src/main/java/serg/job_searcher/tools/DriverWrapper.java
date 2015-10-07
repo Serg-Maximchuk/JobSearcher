@@ -7,17 +7,17 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebElement;
 
-public class HTML_Interpretator<T extends SearchContext> implements HTML_Interpretation {
+public class DriverWrapper<T extends SearchContext> implements DriverWrap {
 
 	private T webElement;
 
-	public HTML_Interpretator(T webElement) {
+	public DriverWrapper(T webElement) {
 		this.webElement = webElement;
 	}
 	
 	@Override
-	public HTML_Interpretation getElByClass(String className) {
-		return new HTML_Interpretator<>(getWebEByClass(className));
+	public DriverWrap getElByClass(String className) {
+		return new DriverWrapper<>(getWebEByClass(className));
 	}
 
 	@Override
@@ -26,10 +26,10 @@ public class HTML_Interpretator<T extends SearchContext> implements HTML_Interpr
 	}
 
 	@Override
-	public List<HTML_Interpretation> getListFromClass(String className) {
-		List<HTML_Interpretation> interList = new LinkedList<>();
+	public List<DriverWrap> getListFromClass(String className) {
+		List<DriverWrap> interList = new LinkedList<>();
 		for (WebElement webE : getListEFromClass(className)) {
-			interList.add(new HTML_Interpretator<>(webE));
+			interList.add(new DriverWrapper<>(webE));
 		}
 		return interList;
 	}

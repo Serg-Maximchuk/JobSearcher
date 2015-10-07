@@ -8,6 +8,7 @@ public class VacancyPrinter {
 	
 	private static final String LINE = "--------------------------------------------";
 	private static final String VAC_NUM = "Number of vacancy: ";
+	private static final String NL = "\n";
 	
 	private VacancyPrinter() {}
 	
@@ -52,35 +53,11 @@ public class VacancyPrinter {
 	}
 	
 	private static void printInfo(Vacancy vac) {
-		printPosition(vac);
-		printCompany(vac);
-		printCity(vac);
-		printText(vac);
-		printTime(vac);
-		printKeyWords(vac);
-	}
-	
-	private static void printPosition(Vacancy vac) {
-		System.out.println("Position: " + vac.getPosition());
-	}
-
-	private static void printCompany(Vacancy vac) {
-		System.out.println("Company: " + vac.getCompany());
-	}
-
-	private static void printCity(Vacancy vac) {
-		System.out.println("City: " + vac.getCity());
-	}
-
-	private static void printText(Vacancy vac) {
-		System.out.println("Vacancy text: " + vac.getText());
-	}
-
-	private static void printTime(Vacancy vac) {
-		System.out.println("Last refresh: " + vac.getTime());
-	}
-
-	private static void printKeyWords(Vacancy vac) {
+		System.out.format("Position: %s." + NL, vac.getPosition());
+		System.out.format("Company: %s." + NL, vac.getCompany());		
+		System.out.format("City: %s." + NL, vac.getCity());
+		System.out.format("Vacancy text: %s." + NL, vac.getText());
+		System.out.format("Last refresh: %s." + NL, vac.getTime());
 		System.out.println("Key words:");
 		for (String keyWord : vac.getKeyWordsList()) {
 			System.out.println(keyWord);

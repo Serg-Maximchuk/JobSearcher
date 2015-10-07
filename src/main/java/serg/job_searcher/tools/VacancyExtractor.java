@@ -21,17 +21,17 @@ public class VacancyExtractor {
 	private VacancyExtractor() {
 	}
 
-	public static List<Vacancy> extract(List<HTML_Interpretation> interVacList) {
-		int size = interVacList.size();
+	public static List<Vacancy> extract(List<DriverWrap> wrappedVacList) {
+		int size = wrappedVacList.size();
 		Vector<Vacancy> vacancies = new Vector<>();
 		vacancies.setSize(size);
 		System.out.print("Process: [");
 		final CountDownLatch latch = new CountDownLatch(size);
-		for (HTML_Interpretation interpretatedVac : interVacList) {
+		for (DriverWrap wrappedVac : wrappedVacList) {
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
-					vacancies.setElementAt(extract(interpretatedVac), interVacList.indexOf(interpretatedVac));
+					vacancies.setElementAt(extract(wrappedVac), wrappedVacList.indexOf(wrappedVac));
 					System.out.print('#');
 					latch.countDown();
 				}
@@ -46,7 +46,7 @@ public class VacancyExtractor {
 		return vacancies;
 	}
 
-	public static Vacancy extract(HTML_Interpretation interpretatedVac) {
+	public static Vacancy extract(DriverWrap wrappedVac) {
 		return new Vacancy() {
 			{
 				final CountDownLatch latch = new CountDownLatch(6);
@@ -54,7 +54,7 @@ public class VacancyExtractor {
 				new Thread(new Runnable() {
 					@Override
 					public void run() {
-						setPosition(interpretatedVac.getTextInClass(POSITION_CLASS));
+						setPosition(wrappedVac.getTextInClass(POSITION_CLASS));
 						latch.countDown();
 					}
 				}).start();
@@ -62,7 +62,7 @@ public class VacancyExtractor {
 				new Thread(new Runnable() {
 					@Override
 					public void run() {
-						setCompany(interpretatedVac.getTextInClass(COMPANY_CLASS));
+						setCompany(wrappedVac.getTextInClass(COMPANY_CLASS));
 						latch.countDown();
 					}
 				}).start();
@@ -70,7 +70,7 @@ public class VacancyExtractor {
 				new Thread(new Runnable() {
 					@Override
 					public void run() {
-						String[] elementText = interpretatedVac.getTextInClass(CITY_CLASS).split(SEPARATOR);
+						String[] elementText = wrappedVac.getTextInClass(CITY_CLASS).split(SEPARATOR);
 						setCity(elementText[elementText.length - 1].trim());
 						latch.countDown();
 					}
@@ -81,12 +81,12 @@ public class VacancyExtractor {
 					public void run() {
 						int i;
 						try {
-							interpretatedVac.getTextInClass(MESSAGE_CLASS);
+							wrappedVac.getTextInClass(MESSAGE_CLASS);
 							i = 1;
 						} catch (NoSuchElementException e) {
 							i = 0;
 						}
-						setText(interpretatedVac.getTextListFromClass(TEXT_CLASS).remove(i));
+						setText(wrappedVac.getTextListFromClass(TEXT_CLASS).remove(i));
 						latch.countDown();
 					}
 				}).start();
@@ -94,7 +94,7 @@ public class VacancyExtractor {
 				new Thread(new Runnable() {
 					@Override
 					public void run() {
-						setTime(interpretatedVac.getTextInClass(TIME_CLASS));
+						setTime(wrappedVac.getTextInClass(TIME_CLASS));
 						latch.countDown();
 					}
 				}).start();
@@ -102,7 +102,7 @@ public class VacancyExtractor {
 				new Thread(new Runnable() {
 					@Override
 					public void run() {
-						setKeyWords(interpretatedVac
+						setKeyWords(wrappedVac
 								.getElByClass(KEY_WORDS_CLASS)
 								.getTextListFromClass(TEXT_CLASS));
 						latch.countDown();

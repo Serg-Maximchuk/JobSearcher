@@ -19,6 +19,8 @@ public class ConsoleSpeaker {
 			+ "2. Firefox - type '2'" + NL
 			+ "Choose browser:";
 	private static final String INCORRECT = "Incorrect. Try again.";
+	private static final String BUILD_MESSAGE = "Launching " + "%s" + "%s" + NL;
+	private static final String POSITIONS_MESSAGE = "Founded next positions:";
 	private static final String[] REGIME_WORDS = {" mode", "Test", "Search"};
 	private static final String[] BROWSER_WORDS = {" browser", "Chrome", "Firefox"};
 	private static final String ERR = "ERROR.";
@@ -31,9 +33,13 @@ public class ConsoleSpeaker {
 	private static final String CLOSE_MESSAGE = "There is no new vacancies.";
 	private static final String BYE_MESSAGE = "Good bye.";
 	private static final String ASK_TEST_VAC = "As I work in test mode, how much vacancies needs to be founded?";
-	private static final String ASK_POSITION = 
+	private static final String NEED_SEE = "I need see " + "%s" + " vacancies on next page." + NL;
+	private static final String ASK_POSITION =
 			"To print more information about interesting vacancy just type it's number." + NL
 			+"To go out - type '0'.";
+	private static final String VACANCIES = "New vacancies: " + "%s" + NL + "Active vacancies: " + "%s" + NL
+			 + "Actual vacancies: " + "%s" + NL;
+	private static final String MESSAGE = "Message: " + "%s" + NL;
 	
 	
 	private ConsoleSpeaker() {}
@@ -89,7 +95,11 @@ public class ConsoleSpeaker {
 	}
 	
 	public static void buildMessage(int pointer, String[] words) {
-		System.out.println("Launching " + words[pointer] + words[0]);
+		System.out.format(BUILD_MESSAGE, words[pointer], words[0]);
+	}
+	
+	public static void positionsMess() {
+		System.out.println(POSITIONS_MESSAGE);
 	}
 	
 	public static void error() {
@@ -101,7 +111,7 @@ public class ConsoleSpeaker {
 	}
 
 	public static void needSee(int delta) {
-		System.out.println("I need see " + delta + " vacancies on next page.");
+		System.out.format(NEED_SEE, delta);
 	}
 
 	public static void askPosition() {
@@ -109,13 +119,11 @@ public class ConsoleSpeaker {
 	}
 
 	public static void printVacancies(int newVacCount, int activeVacCount, int actualVacCount) {
-		System.out.println("New vacancies: " + newVacCount + NL
-				 + "Active vacancies: " + activeVacCount + NL
-				 + "Actual vacancies: " + actualVacCount);
+		System.out.format(VACANCIES, newVacCount, activeVacCount, actualVacCount);
 	}
 
-	public static void printMessage(String message) {
-		System.out.println("Message: " + message);
+	public static void printMessage(String text) {
+		System.out.format(MESSAGE, text);
 	}
 	
 	public static void askCloseBrowser() {

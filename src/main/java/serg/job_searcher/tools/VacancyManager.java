@@ -2,15 +2,10 @@ package serg.job_searcher.tools;
 
 import java.util.LinkedList;
 import java.util.List;
-
-import serg.job_searcher.browsers.ChromeBrowser;
-import serg.job_searcher.browsers.FirefoxBrowser;
 import serg.job_searcher.browsers.WebBrowser;
 import serg.job_searcher.entities.Vacancy;
 
 public class VacancyManager {
-
-	private static final String VACANCIES_URL = "http://rabota.ua/jobsearch/notepad/vacancies_profile";
 
 	private static final String MESSAGE_CLASS = "mtmb";
 	private static final String MESSAGE_TEXT = "text-center";
@@ -18,28 +13,26 @@ public class VacancyManager {
 	private static final String VAC_CLASS = "item";
 	private static final String PAGE_ARG = "?pg=";
 
+	private WebBrowser browser;
 	private List<Vacancy> vacancies;
 	private int newVacCount;
 	private int activeVacCount;
 	private int actualVacCount;
 	private LinkedList<Integer> vacCountMesList;
 	private List<String> messages;
-	private HTML_Interpretation driverInter;
-	private WebBrowser browser;
+	private DriverWrap driver;
 	private boolean testRegime;
 	private int pageCount = 1;
-	private boolean hadToBeClosed;
 
-	public void initialize() {
+	public void initialize(WebBrowser browser) {
+		this.browser = browser;
+		setDriverWrap(browser.getDriverWrap());
 		testRegime = (ConsoleSpeaker.askRegime() == 1) ? true : false;
-		browser = (ConsoleSpeaker.askBrowser() == 1) ? new ChromeBrowser() : new FirefoxBrowser();
-		browser.open(VACANCIES_URL);
-		this.driverInter = browser.getInterDriver();
 		intializeVacCountFromMessages();
 	}
 
-	public void setDriverInter(HTML_Interpretation driverInter) {
-		this.driverInter = driverInter;
+	public void setDriverWrap(DriverWrap driver) {
+		this.driver = driver;
 	}
 
 	public void intializeVacCountFromMessages() {
@@ -60,8 +53,8 @@ public class VacancyManager {
 			private static final long serialVersionUID = 55726793690860279L;
 
 			{
-				for (HTML_Interpretation interElement : driverInter.getListFromClass(MESSAGE_CLASS)) {
-					add(interElement.getTextInClass(MESSAGE_TEXT));
+				for (DriverWrap wrappedMessage : driver.getListFromClass(MESSAGE_CLASS)) {
+					add(wrappedMessage.getTextInClass(MESSAGE_TEXT));
 				}
 			}
 		};
@@ -89,7 +82,7 @@ public class VacancyManager {
 
 	public int getActiveVacCount() {
 		try {
-			String foundedNewVacStr = driverInter.getTextInClass(ACTIVE_VAC_CLASS);
+			String foundedNewVacStr = driver.getTextInClass(ACTIVE_VAC_CLASS);
 			return Integer.valueOf(foundedNewVacStr);
 		} catch (Exception e) {
 			System.out.println("Can't get active vacancies. Is they exist?");
@@ -128,7 +121,7 @@ public class VacancyManager {
 			return null;
 		}
 		// the last element (21-st) is page switcher, so we need only 20
-		List<HTML_Interpretation> allVacOnPage = driverInter.getListFromClass(VAC_CLASS).subList(0, 20);
+		List<DriverWrap> allVacOnPage = driver.getListFromClass(VAC_CLASS).subList(0, 20);
 		int vacOnPageCount = allVacOnPage.size();
 		if (vacCount > vacOnPageCount) {
 			List<Vacancy> vacList = VacancyExtractor.extract(allVacOnPage);
@@ -136,7 +129,7 @@ public class VacancyManager {
 			ConsoleSpeaker.needSee(delta);
 			VacancyManager man = new VacancyManager();
 			man.setPageCount(++pageCount);
-			man.setDriverInter(goToNextPage().getInterDriver());
+			man.setDriverWrap(goToNextPage().getDriverWrap());
 			vacList.addAll(man.generateVacList(delta));
 			return vacList;
 		} else {
@@ -184,26 +177,5 @@ public class VacancyManager {
 
 	public void printNewVacList() {
 		VacancyPrinter.printList(vacancies);
-	}
-
-	public void askCloseBrowser() {
-		ConsoleSpeaker.askCloseBrowser();
-		int answer = ConsoleSpeaker.get_2_Or_1();
-		if (answer == 1) {
-			hadToBeClosed = true;
-			ConsoleSpeaker.printCloseBrowserMessage();
-		} else if (answer == 2) {
-			hadToBeClosed = false;
-		} else {
-			ConsoleSpeaker.error();
-		}
-	}
-
-	public boolean isNeededCloseBrowser() {
-		return hadToBeClosed;
-	}
-
-	public void closeBrowser() {
-		browser.close();
 	}
 }

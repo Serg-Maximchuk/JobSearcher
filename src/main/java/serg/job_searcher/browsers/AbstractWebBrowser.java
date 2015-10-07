@@ -7,12 +7,13 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import serg.job_searcher.tools.HTML_Interpretation;
-import serg.job_searcher.tools.HTML_Interpretator;
+import serg.job_searcher.tools.DriverWrap;
+import serg.job_searcher.tools.DriverWrapper;
 
 abstract class AbstractWebBrowser implements WebBrowser {
 	
 	protected WebDriver driver;
+	protected DriverWrap driverWrap;
 
 	@Override
 	public WebBrowser open(String url) {
@@ -26,8 +27,11 @@ abstract class AbstractWebBrowser implements WebBrowser {
 	}
 	
 	@Override
-	public HTML_Interpretation getInterDriver() {
-		return new HTML_Interpretator<>(driver);
+	public DriverWrap getDriverWrap() {
+		if (driverWrap == null) {
+			driverWrap = new DriverWrapper<>(driver);
+		}
+		return driverWrap;
 	}
 	
 	@Override
