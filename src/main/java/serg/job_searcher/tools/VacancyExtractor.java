@@ -49,8 +49,38 @@ public class VacancyExtractor {
 	public static Vacancy extract(DriverWrap wrappedVac) {
 		return new Vacancy() {
 			{
-				final CountDownLatch latch = new CountDownLatch(6);
-
+				final CountDownLatch latch = new CountDownLatch(2);
+				
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						setPosition(wrappedVac.getTextInClass(POSITION_CLASS));
+						setCompany(wrappedVac.getTextInClass(COMPANY_CLASS));
+						String[] elementText = wrappedVac.getTextInClass(CITY_CLASS).split(SEPARATOR);
+						setCity(elementText[elementText.length - 1].trim());
+						latch.countDown();
+					}
+				}).start();
+				
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						int i;
+						try {
+							wrappedVac.getTextInClass(MESSAGE_CLASS);
+							i = 1;
+						} catch (NoSuchElementException e) {
+							i = 0;
+						}
+						setText(wrappedVac.getTextListFromClass(TEXT_CLASS).remove(i));
+						setTime(wrappedVac.getTextInClass(TIME_CLASS));
+						setKeyWords(wrappedVac
+								.getElByClass(KEY_WORDS_CLASS)
+								.getTextListFromClass(TEXT_CLASS));
+						latch.countDown();
+					}
+				}).start();
+/*
 				new Thread(new Runnable() {
 					@Override
 					public void run() {
@@ -108,12 +138,13 @@ public class VacancyExtractor {
 						latch.countDown();
 					}
 				}).start();
-
+*/
 				try {
 					latch.await();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
+				
 			}
 		};
 	}
